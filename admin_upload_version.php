@@ -37,8 +37,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $error = '资源文件上传失败';
     } else {
         // 处理文件上传（按标题+版本号建目录）
-        $target_dir = 'uploads/' . $file['title'] . '/' . $version;
-        $file_path = upload_file($_FILES['file'], $target_dir);
+            $target_dir = 'uploads/' . $file['title'] . '/' . $version;
+            
+            // 允许的资源文件类型
+            $allowed_file_ext = ['zip', 'jar', 'rar', '7z'];
+            // 文件大小限制（50MB）
+            $max_file_size = 50 * 1024 * 1024;
+            
+            $file_path = upload_file($_FILES['file'], $target_dir, $allowed_file_ext, $max_file_size);
         
         if ($file_path) {
             // 开启事务

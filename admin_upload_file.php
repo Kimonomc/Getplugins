@@ -78,8 +78,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['action'])) {
         } else {
             // 处理文件上传
             $target_dir = 'uploads/' . $title . '/' . $version;
-            $file_path = upload_file($_FILES['file'], $target_dir);
-            $icon_path = upload_file($_FILES['icon'], 'uploads/' . $title);
+            
+            // 允许的资源文件类型
+            $allowed_file_ext = ['zip', 'jar', 'rar', '7z'];
+            // 允许的图片文件类型
+            $allowed_image_ext = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+            // 文件大小限制（50MB）
+            $max_file_size = 50 * 1024 * 1024;
+            
+            $file_path = upload_file($_FILES['file'], $target_dir, $allowed_file_ext, $max_file_size);
+            $icon_path = upload_file($_FILES['icon'], 'uploads/' . $title, $allowed_image_ext, $max_file_size);
             
             if ($file_path && $icon_path) {
                 $conn->begin_transaction();

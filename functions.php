@@ -37,12 +37,32 @@ function get_expire_time() {
 }
 
 // 上传文件处理
-function upload_file($file, $target_dir) {
-    if (!is_dir($target_dir)) {
-        mkdir($target_dir, 0777, true);
+function upload_file($file, $target_dir, $allowed_ext = [], $max_size = 50 * 1024 * 1024) {
+    // 验证文件大小
+    if ($file['size'] > $max_size) {
+        return false;
     }
-    $file_name = basename($file['name']);
-    $target_path = $target_dir . '/' . $file_name;
+    
+    // 验证文件类型
+    $file_ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+    if (!empty($allowed_ext) && !in_array($file_ext, $allowed_ext)) {
+        return false;
+    }
+    
+    // 安全处理目录路径（防止路径遍历）
+    $target_dir = preg_replace('/[^\w\-\/]+/', '', $target_dir);
+    $target_dir = rtrim($target_dir, '/');
+    
+    // 创建目录
+    if (!is_dir($target_dir)) {
+        mkdir($target_dir, 0755, true);
+    }
+    
+    // 生成唯一文件名
+    $new_filename = uniqid() . '.' . $file_ext;
+    $target_path = $target_dir . '/' . $new_filename;
+    
+    // 移动文件
     if (move_uploaded_file($file['tmp_name'], $target_path)) {
         return $target_path;
     } else {

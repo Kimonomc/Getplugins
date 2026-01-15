@@ -40,7 +40,7 @@ increment_download_count($version['file_id']);
 // ========== 主要改动开始（修复压缩包损坏） ==========
 // 1. 获取文件相关信息
 $file_path = $version['file_path'];
-$file_name=basename($file_path);
+$file_name = $version['filename']; // 使用数据库中存储的原始文件名
 $file_ext=strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
 $username = $_SESSION['username']; // 从session获取登录用户名
 $download_time=date('Y-m-d H:i:s'); // 获取当前下载时间

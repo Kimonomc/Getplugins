@@ -48,6 +48,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 // 验证输入
                 if (empty($username) || empty($password) || empty($confirm_pwd)) {
                     $error = '所有字段不能为空';
+                } elseif (strlen($username) < 3 || strlen($username) > 20) {
+                    $error = '用户名长度应在3-20个字符之间';
+                } elseif (!preg_match('/^[a-zA-Z0-9_]+$/', $username)) {
+                    $error = '用户名只能包含字母、数字和下划线';
+                } elseif (strlen($password) < 8) {
+                    $error = '密码长度至少8个字符';
+                } elseif (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/', $password)) {
+                    $error = '密码必须包含大小写字母和数字';
                 } elseif ($password != $confirm_pwd) {
                     $error = '两次密码不一致';
                 } else {
